@@ -1,0 +1,24 @@
+M$ModelName = "Scalar_Dark_Matter";
+M$Information = {
+            Authors -> {"SLYBGODH"},
+            Version -> "1.0",
+            Date -> "13. 01. 2010",
+            Institutions -> {"Durham / IPPP"},
+            Emails -> {"claude.duhr@durham.ac.uk"}};
+M$ClassesDescription = {
+            S[4] == {
+                 ClassName -> sc,
+                 SelfConjugate -> True,
+                 Mass -> {Msc, 70},
+                 ParticleName -> "~sc"}
+}
+M$Parameters = {
+          lS == {
+                 Value -> 0.02,
+                 InteractionOrder -> {QED, 2},
+                 Description -> "DM scalar couplings"},
+          lSH == {
+                 Value -> 0.02,
+                 InteractionOrder -> {QED, 2},
+                 Description -> "DM Higgs coupling"}
+}

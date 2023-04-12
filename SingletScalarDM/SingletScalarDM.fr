@@ -1,0 +1,75 @@
+(****************************************)
+(****************************************)
+(****** Singlet Scalar Dark Matter ******)
+(******                            ******)
+(****** Authors: Andreas Goudelis  ******)
+(****************************************)
+(****************************************)
+
+M$ModelName = "SingletScalarDM";
+M$Information = {Authors -> {"Andreas Goudelis"}, Version -> "1.0", Date -> "16.06.2021"};
+FeynmanGauge = False;
+
+(* ************************** *)
+(* *** Interaction orders *** *)
+(* ***  (as used by mg5)  *** *)
+(* ************************** *)
+
+M$InteractionOrderHierarchy = { {NP,1}, {QCD,1}, {QED,2} };
+
+(* ************************** *)
+(* *****   Parameters   ***** *)
+(* ************************** *)
+
+M$Parameters = {
+
+(* Internal parameters, computed as functions of external, user-defined ones *)
+  muss  == { TeX->Subscript[\[Lambda],s], ComplexParameter -> False, ParameterType -> Internal, Value -> Sqrt[mss^2 - lamssh*vev^2], Description->"Dark scalar mass parameter"},
+
+(* External parameters, fixed by the user *)
+  QS      == { TeX->Subscript[Q,s], ComplexParameter -> False, ParameterType -> External, Value->100, Description->"Dummy QCD scale for running quark masses in CalcHEP"},
+  
+  lamss   == { TeX->Subscript[\[Lambda],s],  ComplexParameter -> False, ParameterType -> External, Value -> 0.1, InteractionOrder->{QED, 2}, Description->"Dark scalar quartic interaction"                    },
+  lamssh  == { TeX->Subscript[\[Lambda],sh], ComplexParameter -> False, ParameterType -> External, Value -> 0.1, InteractionOrder->{QED, 2}, Description->"Dark scalar - Higgs doublet interaction"            }
+
+};
+
+
+(* ***************************************** *)
+(* ****        Particle classes         **** *)
+(*                                           *)
+(* **** SM particles contained in SM.fr **** *)
+(* ***************************************** *)
+
+M$ClassesDescription = {
+
+(* The dark scalar *)
+S[6] == { 
+         ClassName       -> ss, 
+         SelfConjugate   -> True, 
+         QuantumNumbers  -> {}, 
+         Mass            -> {mss, 10.},  
+         Width           -> {wss,  0.}, 
+         ParticleName    -> "~ss", 
+         PDG             -> 254, 
+         PropagatorLabel -> "ss", 
+         PropagatorType  -> ScalarDash, 
+         ParticleName    -> {"~ss"},
+         FullName        -> {"Dark scalar"} }
+};
+
+
+(* ****************************************** *)
+(* ****          BSM Lagrangian          **** *)
+(*                                            *)
+(* ***   SM Lagrangian written in SM.fr   *** *)
+(* ****************************************** *)
+
+LNP := Block[{ii}, 
+  feynmangaugerules = If[Not[FeynmanGauge], {G0|GP|GPbar ->0}, {}];
+  ExpandIndices[
+                del[ss,mu]^2 - muss^2/2 ss^2 - lamss/4 ss^4 - lamssh ss^2 Phibar[ii] Phi[ii], 
+                FlavorExpand->{SU2D}]/.feynmangaugerules
+               ];
+
+LTOT := LSM + LNP;
